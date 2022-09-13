@@ -8,22 +8,30 @@ jobs:
   release:
     runs-on: ubuntu-20.04
     steps:
+      - name: 'Wait for status checks'
+        id: waitforstatuschecks
+        uses: "WyriHaximus/github-action-wait-for-status@v2"
+        with:
+          checkInterval: 13
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"    
       - name: Check out code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: 'Get next minor version'
         uses: paulhatch/semantic-version@v4.0.2
-        id: version
+        id: next_version
         with:
           tag_prefix: "v"
           major_pattern: "(MAJOR-BREAKING-CHANGE)"
           minor_pattern: "(MINOR-NON-BREAKING-CHANGE)"
           format: "v${major}.${minor}.${patch}"
+          bump_each_commit: true
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ steps.version.version.v }}
+          tag_name: ${{ steps.version.next_version.version }}
           generate_release_notes: true
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
