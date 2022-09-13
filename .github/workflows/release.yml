@@ -13,6 +13,7 @@ jobs:
         uses: "WyriHaximus/github-action-wait-for-status@v1.4"
         with:
           checkInterval: 13
+          ignoreActions: Create Release
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"    
       - name: Check out code
